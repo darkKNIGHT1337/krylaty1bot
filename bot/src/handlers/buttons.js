@@ -1,115 +1,70 @@
-/**
- * Обработчики нажатий на кнопки (Inline Keyboard Actions)
- */
-
+const { backKeyboard, mainKeyboard } = require('../utils/keyboards');
 const content = require('../config/content');
-const { mainKeyboard, sectionKeyboard } = require('../utils/keyboards');
 
 /**
- * Форматирует сообщение для раздела
- * @param {Object} section - объект раздела из content.js
- * @returns {string} отформатированный текст
+ * Регистрация всех обработчиков кнопок
  */
-const formatSectionMessage = (section) => {
-  return `${section.title}\n\n${section.description}`;
-};
+const register = (bot) => {
 
-/**
- * Регистрирует все обработчики кнопок в боте
- * @param {import('telegraf').Telegraf} bot
- */
-const registerButtonHandlers = (bot) => {
+  // ==================== ГЛАВНОЕ МЕНЮ ====================
 
-  // ============================================================
-  // ОБРАБОТЧИКИ 4 ОСНОВНЫХ РАЗДЕЛОВ
-  // ============================================================
-
-  // Кнопка: Про приват
-  bot.action('section_about_private', async (ctx) => {
+  bot.hears('🔑 Приватный канал', async (ctx) => {
     try {
-      await ctx.answerCbQuery();
-      const section = content.sections.about_private;
-      await ctx.editMessageText(
-        formatSectionMessage(section),
-        {
-          parse_mode: 'Markdown',
-          ...sectionKeyboard(section.videoUrl),
-        }
-      );
-    } catch (error) {
-      console.error('[ERROR] section_about_private:', error.message);
+      await ctx.replyWithVideo(content.privateChannel.videoId, {
+        caption: content.privateChannel.text,
+        parse_mode: 'Markdown',
+        reply_markup: backKeyboard().reply_markup
+      });
+    } catch (err) {
+      await ctx.reply("Видео ещё не загружено. Скоро добавлю.");
     }
   });
 
-  // Кнопка: Копитрейдинг
-  bot.action('section_copy_trading', async (ctx) => {
+  bot.hears('📊 Копитрейдинг', async (ctx) => {
     try {
-      await ctx.answerCbQuery();
-      const section = content.sections.copy_trading;
-      await ctx.editMessageText(
-        formatSectionMessage(section),
-        {
-          parse_mode: 'Markdown',
-          ...sectionKeyboard(section.videoUrl),
-        }
-      );
-    } catch (error) {
-      console.error('[ERROR] section_copy_trading:', error.message);
+      await ctx.replyWithVideo(content.copytrading.videoId, {
+        caption: content.copytrading.text,
+        parse_mode: 'Markdown',
+        reply_markup: backKeyboard().reply_markup
+      });
+    } catch (err) {
+      await ctx.reply("Видео ещё не загружено. Скоро добавлю.");
     }
   });
 
-  // Кнопка: Бесплатный видеоурок
-  bot.action('section_free_lesson', async (ctx) => {
+  bot.hears('📹 Бесплатный видео-урок', async (ctx) => {
     try {
-      await ctx.answerCbQuery();
-      const section = content.sections.free_lesson;
-      await ctx.editMessageText(
-        formatSectionMessage(section),
-        {
-          parse_mode: 'Markdown',
-          ...sectionKeyboard(section.videoUrl),
-        }
-      );
-    } catch (error) {
-      console.error('[ERROR] section_free_lesson:', error.message);
+      await ctx.replyWithVideo(content.freeLesson.videoId, {
+        caption: content.freeLesson.text,
+        parse_mode: 'Markdown',
+        reply_markup: backKeyboard().reply_markup
+      });
+    } catch (err) {
+      await ctx.reply("Видео ещё не загружено. Скоро добавлю.");
     }
   });
 
-  // Кнопка: Наш инструмент
-  bot.action('section_our_tool', async (ctx) => {
-    try {
-      await ctx.answerCbQuery();
-      const section = content.sections.our_tool;
-      await ctx.editMessageText(
-        formatSectionMessage(section),
-        {
-          parse_mode: 'Markdown',
-          ...sectionKeyboard(section.videoUrl),
-        }
-      );
-    } catch (error) {
-      console.error('[ERROR] section_our_tool:', error.message);
-    }
+  bot.hears('💬 Отзывы', async (ctx) => {
+    await ctx.reply(content.reviews.text, {
+      parse_mode: 'Markdown',
+      reply_markup: backKeyboard().reply_markup
+    });
   });
 
-  // ============================================================
-  // КНОПКА "НАЗАД" — возврат в главное меню
-  // ============================================================
-  bot.action('back_to_main', async (ctx) => {
-    try {
-      await ctx.answerCbQuery();
-      await ctx.editMessageText(
-        content.mainMenu.welcomeText,
-        {
-          parse_mode: 'Markdown',
-          ...mainKeyboard(),
-        }
-      );
-    } catch (error) {
-      console.error('[ERROR] back_to_main:', error.message);
-    }
+  bot.hears('✍️ Написать мне', async (ctx) => {
+    await ctx.reply('✍️ Напиши мне напрямую 👇\n\n@твой_юзернейм', {
+      reply_markup: backKeyboard().reply_markup
+    });
+  });
+
+  // ==================== КНОПКА НАЗАД ====================
+
+  bot.hears('🔙 Назад в меню', async (ctx) => {
+    await ctx.reply('🔄 Возвращаемся в главное меню...', {
+      reply_markup: mainKeyboard().reply_markup
+    });
   });
 
 };
 
-module.exports = { registerButtonHandlers };
+module.exports = { register };

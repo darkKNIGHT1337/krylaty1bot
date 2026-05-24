@@ -1,53 +1,40 @@
-/**
- * Обработчик команды /start
- * Отправляет видео-кружок (если задан) и главное меню с кнопками.
- */
-
-const content = require('../config/content');
 const { mainKeyboard } = require('../utils/keyboards');
+const content = require('../config/content');
 
 /**
- * Регистрирует команду /start в боте
- * @param {import('telegraf').Telegraf} bot
+ * Отправляет полное приветствие (видео-кружок + меню)
  */
-const registerStartCommand = (bot) => {
+const sendWelcome = async (ctx, user = null) => {
+  const targetUserId = user ? user.id : ctx.from.id;
+
+  try {
+    // Отправляем видео-кружок
+    await ctx.telegram.sendVideoNote(targetUserId, content.welcome.videoNoteId, {
+      protect_content: false
+    });
+
+    // Отправляем текст + главное меню
+    await ctx.telegram.sendMessage(targetUserId, content.welcome.text, {
+      parse_mode: 'Markdown',
+      reply_markup: mainKeyboard().reply_markup
+    });
+
+    console.log(`Приветствие отправлено пользователю ${targetUserId}`);
+  } catch (err) {
+    console.error('Ошибка sendWelcome:', err.message);
+  }
+};
+
+/**
+ * Регистрация команды /start
+ */
+const register = (bot) => {
   bot.start(async (ctx) => {
-    try {
-      const userId = ctx.from?.id;
-      const userName = ctx.from?.first_name || 'друг';
-
-      if (process.env.DEBUG === 'true') {
-        console.log(`[START] User: ${userId} (${userName})`);
-
-        // Логируем входящее сообщение для отладки (полезно при получении file_id)
-        if (ctx.message?.video_note) {
-          console.log('[DEBUG] video_note file_id:', ctx.message.video_note.file_id);
-        }
-      }
-
-      // ============================================================
-      // ШАГ 1: ОТПРАВКА ВИДЕО-КРУЖКА
-      // ============================================================
-      // Если VIDEO_NOTE_FILE_ID задан в content.js — отправляем кружок
-      // Если не задан — этот блок пропускается, сразу показывается меню
-      // ============================================================
-      if (content.VIDEO_NOTE_FILE_ID) {
-        await ctx.sendVideoNote(content.VIDEO_NOTE_FILE_ID);
-      }
-
-      // ============================================================
-      // ШАГ 2: ОТПРАВКА ГЛАВНОГО МЕНЮ
-      // ============================================================
-      await ctx.replyWithMarkdown(
-        content.mainMenu.welcomeText,
-        mainKeyboard()
-      );
-
-    } catch (error) {
-      console.error('[ERROR] /start command:', error.message);
-      await ctx.reply('Произошла ошибка. Попробуйте ещё раз через несколько секунд.');
-    }
+    await sendWelcome(ctx);
   });
 };
 
-module.exports = { registerStartCommand };
+module.exports = {
+  register,
+  sendWelcome
+};
