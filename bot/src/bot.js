@@ -7,41 +7,34 @@ const buttonHandlers = require('./handlers/buttons');
 const createBot = () => {
   const bot = new Telegraf(process.env.BOT_TOKEN);
 
-  // Расширенное логирование
+  // === СУПЕР ЛОГИРОВАНИЕ ===
   bot.use((ctx, next) => {
+    console.log(`\n=== НОВОЕ СООБЩЕНИЕ ===`);
+    console.log('Тип:', ctx.updateType);
+    
     if (ctx.message?.video_note) {
-      console.log('🔥 VIDEO_NOTE FILE_ID:', ctx.message.video_note.file_id);
+      console.log('🔥 НАЙДЕН VIDEO NOTE!');
+      console.log('FILE_ID:', ctx.message.video_note.file_id);
+      console.log('Длина:', ctx.message.video_note.file_id.length);
     }
+
     return next();
   });
 
-  // Регистрация
   startCommand.register(bot);
   buttonHandlers.register(bot);
 
-  // Автоприветствие при подписке на канал
+  // Автоприветствие
   bot.on('chat_member', async (ctx) => {
     const { chat, new_chat_member, old_chat_member } = ctx.chatMember;
-    
-    const CHANNEL_ID = -1003633991198; // ←←← ИЗМЕНИ НА ID КАНАЛА!!!
+    const CHANNEL_ID = -1003633991198; // ← замени
 
     if (chat.id !== CHANNEL_ID) return;
 
-    if (new_chat_member.status === 'member' && 
-        ['left', 'kicked'].includes(old_chat_member.status)) {
-      
-      const user = new_chat_member.user;
-      console.log(`Новый подписчик: ${user.id} (${user.first_name})`);
-
-      try {
-        await startCommand.sendWelcome(ctx, user);
-      } catch (err) {
-        console.error('Ошибка автоприветствия:', err.message);
-      }
+    if (new_chat_member.status === 'member' && ['left', 'kicked'].includes(old_chat_member.status)) {
+      await startCommand.sendWelcome(ctx, new_chat_member.user);
     }
   });
-
-  bot.catch((err) => console.error('Bot Error:', err));
 
   return bot;
 };

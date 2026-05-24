@@ -1,21 +1,21 @@
 module.exports = {
   welcome: {
-    videoNoteId: 'ЗДЕСЬ_БУДЕТ_FILE_ID_КРУЖКА',   // ← Самое важное!
+    videoNoteId: 'AAMCAgADGQEAASmWS2oTh5FZap6Vix7uByKMwSdcC2GsAAKhlgAC_AABiEjdLWEf9DQgkQEAB20AAzsE',   // ← сюда вставишь настоящий file_id
     text: '👋 *Добро пожаловать в Krylaty!*\n\nЯ твой личный помощник. Выбирай раздел ниже 👇'
   },
 
   privateChannel: {
-    videoId: 'FILE_ID_ВИДЕО_ПРИВАТКА',
+    videoId: '',
     text: '🔑 *Приватный канал*\n\nЗдесь ты получишь закрытый контент и сигналы.'
   },
 
   copytrading: {
-    videoId: 'FILE_ID_ВИДЕО_КОПИ',
+    videoId: '',
     text: '📊 *Копитрейдинг*\n\nАвтоматическое копирование сделок.'
   },
 
   freeLesson: {
-    videoId: 'FILE_ID_БЕСПЛАТНОГО_УРОКА',
+    videoId: '',
     text: '📹 *Бесплатный видео-урок*'
   },
 
