@@ -1,40 +1,17 @@
-/**
- * ============================================================
- * ТОЧКА ВХОДА — Telegram Bot
- * Запуск: node index.js
- * Разработка: npm run dev (с автоперезагрузкой)
- * ============================================================
- */
-
 require('dotenv').config();
+const { createBot } = require('./src/bot');
 
-const { createBot, startBot } = require('./src/bot');
+console.log('[BOT] Инициализация бота...');
 
-// ============================================================
-// Запуск бота
-// ============================================================
-(() => {
-  try {
-    console.log('[BOT] Инициализация бота...');
+const bot = createBot();
 
-    const bot = createBot();
-    startBot(bot);
+bot.launch()
+  .then(() => {
+    console.log('[BOT] Бот успешно запущен и готов к работе!');
+  })
+  .catch((err) => {
+    console.error('[BOT] Ошибка запуска:', err);
+  });
 
-    // ============================================================
-    // Корректная остановка при завершении процесса
-    // ============================================================
-    process.once('SIGINT', () => {
-      console.log('[BOT] Получен SIGINT, останавливаем бота...');
-      bot.stop('SIGINT');
-    });
-
-    process.once('SIGTERM', () => {
-      console.log('[BOT] Получен SIGTERM, останавливаем бота...');
-      bot.stop('SIGTERM');
-    });
-
-  } catch (error) {
-    console.error('[FATAL ERROR]', error.message);
-    process.exit(1);
-  }
-})();
+process.once('SIGINT', () => bot.stop('SIGINT'));
+process.once('SIGTERM', () => bot.stop('SIGTERM'));
