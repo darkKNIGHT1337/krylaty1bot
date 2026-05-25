@@ -3,6 +3,7 @@ const { Telegraf } = require('telegraf');
 
 const { registerStartCommand } = require('./commands/start');
 const { registerButtonHandlers } = require('./handlers/buttons');
+const { registerChannelJoinHandler } = require('./handlers/channelJoin');
 
 const createBot = () => {
   const bot = new Telegraf(process.env.BOT_TOKEN);
@@ -29,6 +30,7 @@ const createBot = () => {
 
   registerStartCommand(bot);
   registerButtonHandlers(bot);
+  registerChannelJoinHandler(bot);
 
   return bot;
 };

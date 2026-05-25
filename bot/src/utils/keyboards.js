@@ -9,7 +9,7 @@ const mainKeyboard = () => {
     [
       Markup.button.callback('🔑 Бесплатный видеоурок', 'video_lesson')
     ],
-    [Markup.button.url('💬 Отзывы', 'https://t.me/secretshop1st')],
+    [Markup.button.url('💬 Отзывы', 'https://t.me/krylaty_otzyv')],
     [Markup.button.url('✉️ Написать мне', 'https://t.me/krylaty_tyt')]
   ]);
 };
