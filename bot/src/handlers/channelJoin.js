@@ -1,31 +1,47 @@
-const { sendWelcome } = require('../commands/start');
+// bot/src/handlers/channelJoin.js
+
+const content = require('../config/content');
+const { mainKeyboard } = require('../utils/keyboards');
+
+const CHANNEL_ID = -1003514446429; // ←←← ИЗМЕНИ НА РЕАЛЬНЫЙ ID КАНАЛА !!
+
+const sendWelcomeToNewMember = async (ctx, user) => {
+    try {
+        console.log(`[CHANNEL JOIN] → Отправляем приветствие пользователю ${user.id} (@${user.username || 'no_username'})`);
+
+        if (content.welcome?.videoNoteId) {
+            await ctx.sendVideoNote(content.welcome.videoNoteId, {
+                reply_markup: mainKeyboard().reply_markup
+            });
+        } else {
+            await ctx.reply('👋 Добро пожаловать в канал!\n\nНажми кнопку ниже для главного меню:', mainKeyboard());
+        }
+    } catch (error) {
+        console.error('[CHANNEL JOIN] Ошибка отправки сообщения:', error.message);
+    }
+};
 
 const registerChannelJoinHandler = (bot) => {
-    
     bot.on('chat_member', async (ctx) => {
-        const { chat, from, old_chat_member, new_chat_member } = ctx.update.chat_member;
+        try {
+            const { chat, from, old_chat_member, new_chat_member } = ctx.update.chat_member;
 
-        // Проверяем, что это наш канал
-        if (chat.type !== 'channel') return;
+            if (chat.id !== CHANNEL_ID) return;
 
-        // Проверяем, что пользователь только что вступил
-        const wasNotMember = old_chat_member.status === 'left' || 
-                            old_chat_member.status === 'kicked';
-        
-        const isNowMember = new_chat_member.status === 'member' || 
-                           new_chat_member.status === 'administrator';
+            const joined = 
+                (old_chat_member.status === 'left' || old_chat_member.status === 'kicked') &&
+                (new_chat_member.status === 'member' || new_chat_member.status === 'administrator');
 
-        if (wasNotMember && isNowMember) {
-            console.log(`[CHANNEL JOIN] Новый пользователь @${from.username || from.id} зашёл в канал`);
-
-            try {
-                // Отправляем точно такое же приветствие, как при /start
-                await sendWelcome(ctx, from);
-            } catch (err) {
-                console.error('Ошибка отправки приветствия новому участнику:', err.message);
+            if (joined) {
+                console.log(`✅ ЗАФИКСИРОВАНО ВСТУПЛЕНИЕ: ${from.id}`);
+                await sendWelcomeToNewMember(ctx, from);
             }
+        } catch (error) {
+            console.error('❌ Ошибка channelJoin:', error.message);
         }
     });
+
+    console.log(`[CHANNEL JOIN] Обработчик запущен для канала ${CHANNEL_ID}`);
 };
 
 module.exports = { registerChannelJoinHandler };

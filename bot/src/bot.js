@@ -1,38 +1,48 @@
+/**
+ * Инициализация Telegram-бота
+ */
+
 require('dotenv').config();
 const { Telegraf } = require('telegraf');
 
 const { registerStartCommand } = require('./commands/start');
 const { registerButtonHandlers } = require('./handlers/buttons');
-const { registerChannelJoinHandler } = require('./handlers/channelJoin');
+const { registerChannelJoinHandler } = require('./handlers/channelJoin'); // ← важно
 
+/**
+ * Создаёт и настраивает бота
+ */
 const createBot = () => {
-  const bot = new Telegraf(process.env.BOT_TOKEN);
+    const token = process.env.BOT_TOKEN;
 
-  bot.use((ctx, next) => {
-    if (ctx.message?.video) {
-      console.log('\n🔥 ОБЫЧНОЕ ВИДЕО ПОЛУЧЕНО!');
-      console.log('FILE_ID:', ctx.message.video.file_id);
-      console.log('Длина:', ctx.message.video.file_id.length);
-      console.log('Размер:', ctx.message.video.file_size);
+    if (!token) {
+        throw new Error('BOT_TOKEN не задан в .env файле!');
     }
 
-    if (ctx.message?.video_note) {
-      console.log('\n🔵 ВИДЕО-КРУЖОК ПОЛУЧЕН!');
-      console.log('FILE_ID:', ctx.message.video_note.file_id);
+    const bot = new Telegraf(token);
+
+    // Логирование (если DEBUG=true)
+    if (process.env.DEBUG === 'true') {
+        bot.use(async (ctx, next) => {
+            console.log(`[${new Date().toISOString()}] ${ctx.updateType}`);
+            return next();
+        });
     }
 
-    if (ctx.callbackQuery) {
-      console.log(`[CALLBACK] Нажата кнопка: ${ctx.callbackQuery.data}`);
-    }
+    // Регистрация обработчиков
+    registerStartCommand(bot);
+    registerButtonHandlers(bot);
+    registerChannelJoinHandler(bot);     // ← обработчик вступления в канал
 
-    return next();
-  });
+    // Обработка обычных текстовых сообщений
+    bot.on('text', async (ctx) => {
+        if (ctx.message.text.startsWith('/')) return;
+        const content = require('./config/content');
+        const { mainKeyboard } = require('./utils/keyboards');
+        await ctx.replyWithMarkdown(content.mainMenu.welcomeText, mainKeyboard());
+    });
 
-  registerStartCommand(bot);
-  registerButtonHandlers(bot);
-  registerChannelJoinHandler(bot);
-
-  return bot;
+    return bot;
 };
 
 module.exports = { createBot };
