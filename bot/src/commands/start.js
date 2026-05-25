@@ -1,29 +1,26 @@
-const { mainKeyboard } = require('../utils/keyboards');
 const content = require('../config/content');
+const { mainKeyboard } = require('../utils/keyboards');
 
-const sendWelcome = async (ctx, user = null) => {
-  const chatId = user ? user.id : ctx.from.id;
-
-  try {
-    await ctx.telegram.sendVideoNote(chatId, content.welcome.videoNoteId);
-    
-    await ctx.telegram.sendMessage(chatId, content.welcome.text, {
-      parse_mode: 'Markdown',
-      reply_markup: mainKeyboard().reply_markup
-    });
-  } catch (err) {
-    console.error('Ошибка sendWelcome:', err.message);
-    await ctx.telegram.sendMessage(chatId, "Ошибка загрузки приветствия. Попробуй /start");
-  }
-};
-
-const register = (bot) => {
+const registerStartCommand = (bot) => {
   bot.start(async (ctx) => {
-    await sendWelcome(ctx);
+    try {
+      // Удаляем предыдущие сообщения бота, чтобы было чисто
+      if (ctx.message) {
+        await ctx.deleteMessage().catch(() => {});
+      }
+
+      if (content.welcome.videoNoteId) {
+        await ctx.sendVideoNote(
+          content.welcome.videoNoteId,
+          { reply_markup: mainKeyboard().reply_markup }
+        );
+      } else {
+        await ctx.reply('👋 Главное меню', mainKeyboard());
+      }
+    } catch (error) {
+      console.error('[START]', error.message);
+    }
   });
 };
 
-module.exports = {
-  register,
-  sendWelcome
-};
+module.exports = { registerStartCommand };

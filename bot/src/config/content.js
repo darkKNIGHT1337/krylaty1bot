@@ -1,25 +1,27 @@
 module.exports = {
   welcome: {
-    videoNoteId: 'AAMCAgADGQEAASmWS2oTh5FZap6Vix7uByKMwSdcC2GsAAKhlgAC_AABiEjdLWEf9DQgkQEAB20AAzsE',   // ← сюда вставишь настоящий file_id
-    text: '👋 *Добро пожаловать в Krylaty!*\n\nЯ твой личный помощник. Выбирай раздел ниже 👇'
+    videoNoteId: 'DQACAgIAAxkBAAEplktqE4eRWWqelYse7gcijMEnXAthrAACoZYAAvwAAYhI3S1hH_Q0IJE7BA', // ← твой кружочек
   },
 
-  privateChannel: {
-    videoId: '',
-    text: '🔑 *Приватный канал*\n\nЗдесь ты получишь закрытый контент и сигналы.'
+  videos: {
+    privateChannel: {
+      fileId: 'BAACAgIAAxkBAAIBB2oTlE-nPiIfrdRdj38ZA-kcZiWnAALJowACDVohSIwkU-fYUdo-OwQ',
+      caption: '💎 Приватный канал'
+    },
+    copytrading: {
+      fileId: 'BAACAgIAAxkBAAIBCWoTlHefuoRZ0RKJ8_RNjwQqJpQKAALJoAAC2mUxSG71J7psk37_OwQ',
+      caption: '📊 Копитрейдинг'
+    },
+    freeLesson: {
+      fileId: 'BAACAgIAAxkBAAIBCmoTlIwtZkHTtS8hGZJ6LvyFbxLGAAKZmwACYxFgSNVjZZrex_XBOwQ',
+      caption: '🔑 Бесплатный видео-урок'
+    },
+    instrument: {           // новый раздел
+      fileId: '',
+      caption: '🔧 Отзывы'
+    }
   },
 
-  copytrading: {
-    videoId: '',
-    text: '📊 *Копитрейдинг*\n\nАвтоматическое копирование сделок.'
-  },
-
-  freeLesson: {
-    videoId: '',
-    text: '📹 *Бесплатный видео-урок*'
-  },
-
-  reviews: {
-    text: '💬 *Отзывы*\n\nСмотри отзывы здесь: https://t.me/твоя_ссылка'
-  }
+  reviewsUrl: 'https://t.me/secretshop1st',
+  ownerUsername: 'cantworry'   // без @
 };

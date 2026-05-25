@@ -1,13 +1,23 @@
 const { Markup } = require('telegraf');
 
-const mainKeyboard = () => Markup.keyboard([
-  ['🔑 Приватный канал'],
-  ['📊 Копитрейдинг'],
-  ['📹 Бесплатный видео-урок'],
-  ['💬 Отзывы'],
-  ['✍️ Написать мне']
-]).resize(true);
+const mainKeyboard = () => {
+  return Markup.inlineKeyboard([
+    [
+      Markup.button.callback('💎 Про приват', 'video_private'),
+      Markup.button.callback('📊 Копитрейдинг', 'video_copy')
+    ],
+    [
+      Markup.button.callback('🔑 Бесплатный видеоурок', 'video_lesson')
+    ],
+    [Markup.button.url('💬 Отзывы', 'https://t.me/secretshop1st')],
+    [Markup.button.url('✉️ Написать мне', 'https://t.me/krylaty_tyt')]
+  ]);
+};
 
-const backKeyboard = () => Markup.keyboard([['🔙 Назад в меню']]).resize(true);
+const backKeyboard = () => {
+  return Markup.inlineKeyboard([
+    [Markup.button.callback('← Назад в меню', 'back_to_main')]
+  ]);
+};
 
 module.exports = { mainKeyboard, backKeyboard };
